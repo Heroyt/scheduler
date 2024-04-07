@@ -29,15 +29,15 @@ final class RunInfoTest extends TestCase
 		yield [
 			new DateTimeImmutable(),
 			[
-				new PlannedJobInfo('id', 'name', '* * * * *', 0, new DateTimeImmutable()),
+				new PlannedJobInfo('id', 'name', '* * * * *', 0, new DateTimeImmutable(), null),
 			],
 		];
 
 		yield [
 			new DateTimeImmutable('1 month ago'),
 			[
-				new PlannedJobInfo('id', 'name', '* * * * *', 0, new DateTimeImmutable()),
-				new PlannedJobInfo('id', 'name', '* * * * *', 0, new DateTimeImmutable()),
+				new PlannedJobInfo('id', 'name', '* * * * *', 0, new DateTimeImmutable(), null),
+				new PlannedJobInfo('id', 'name', '* * * * *', 0, new DateTimeImmutable(), null),
 			],
 		];
 	}

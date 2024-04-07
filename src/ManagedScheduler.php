@@ -204,6 +204,7 @@ class ManagedScheduler implements Scheduler
 					$jobSchedule->getExpression()->getExpression(),
 					$jobSchedule->getRepeatAfterSeconds(),
 					$jobStart,
+					$timezone,
 				);
 			}
 

@@ -3,6 +3,7 @@
 namespace Orisai\Scheduler\Status;
 
 use DateTimeImmutable;
+use DateTimeZone;
 use function assert;
 
 final class PlannedJobInfo
@@ -25,6 +26,8 @@ final class PlannedJobInfo
 	/** @var non-empty-list<DateTimeImmutable>|null */
 	private ?array $estimatedStartTimes = null;
 
+	private ?DateTimeZone $timeZone;
+
 	/**
 	 * @param string|int $id
 	 * @param int<0, 30> $repeatAfterSeconds
@@ -34,7 +37,8 @@ final class PlannedJobInfo
 		string $name,
 		string $expression,
 		int $repeatAfterSeconds,
-		DateTimeImmutable $runStart
+		DateTimeImmutable $runStart,
+		?DateTimeZone $timeZone
 	)
 	{
 		$this->id = $id;
@@ -42,6 +46,7 @@ final class PlannedJobInfo
 		$this->expression = $expression;
 		$this->repeatAfterSeconds = $repeatAfterSeconds;
 		$this->runStart = $runStart;
+		$this->timeZone = $timeZone;
 	}
 
 	/**
@@ -114,6 +119,11 @@ final class PlannedJobInfo
 		}
 
 		return $this->runsCountPerMinute = $count;
+	}
+
+	public function getTimeZone(): ?DateTimeZone
+	{
+		return $this->timeZone;
 	}
 
 }

@@ -3,6 +3,7 @@
 namespace Tests\Orisai\Scheduler\Unit\Status;
 
 use DateTimeImmutable;
+use DateTimeZone;
 use Generator;
 use Orisai\Scheduler\Status\PlannedJobInfo;
 use PHPUnit\Framework\TestCase;
@@ -22,16 +23,18 @@ final class PlannedJobInfoTest extends TestCase
 		string $expression,
 		int $seconds,
 		string $extendedExpression,
-		DateTimeImmutable $start
+		DateTimeImmutable $start,
+		?DateTimeZone $timeZone
 	): void
 	{
-		$info = new PlannedJobInfo($id, $name, $expression, $seconds, $start);
+		$info = new PlannedJobInfo($id, $name, $expression, $seconds, $start, $timeZone);
 
 		self::assertSame($id, $info->getId());
 		self::assertSame($name, $info->getName());
 		self::assertSame($expression, $info->getExpression());
 		self::assertSame($seconds, $info->getRepeatAfterSeconds());
 		self::assertSame($extendedExpression, $info->getExtendedExpression());
+		self::assertSame($timeZone, $info->getTimeZone());
 	}
 
 	public function provideBasic(): Generator
@@ -43,6 +46,7 @@ final class PlannedJobInfoTest extends TestCase
 			5,
 			'* * * * * / 5',
 			new DateTimeImmutable(),
+			null,
 		];
 
 		yield [
@@ -52,6 +56,7 @@ final class PlannedJobInfoTest extends TestCase
 			10,
 			'1 1 1 1 1 / 10',
 			new DateTimeImmutable('1 month ago'),
+			new DateTimeZone('Europe/Prague'),
 		];
 	}
 
@@ -68,7 +73,7 @@ final class PlannedJobInfoTest extends TestCase
 		array $estimatedTimes
 	): void
 	{
-		$info = new PlannedJobInfo('id', 'name', '* * * * *', $seconds, $start);
+		$info = new PlannedJobInfo('id', 'name', '* * * * *', $seconds, $start, null);
 
 		self::assertSame($runsCount, $info->getRunsCountPerMinute());
 		self::assertEquals($estimatedTimes, $info->getEstimatedStartTimes());
