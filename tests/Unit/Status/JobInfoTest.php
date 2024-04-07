@@ -26,10 +26,11 @@ final class JobInfoTest extends TestCase
 		int $runSecond,
 		DateTimeImmutable $start,
 		?DateTimeZone $timeZone,
-		string $extendedExpression
+		string $extendedExpression,
+		bool $forcedRun
 	): void
 	{
-		$info = new JobInfo($id, $name, $expression, $repeatAfterSeconds, $runSecond, $start, $timeZone);
+		$info = new JobInfo($id, $name, $expression, $repeatAfterSeconds, $runSecond, $start, $timeZone, $forcedRun);
 		self::assertSame($id, $info->getId());
 		self::assertSame($name, $info->getName());
 		self::assertSame($expression, $info->getExpression());
@@ -38,6 +39,7 @@ final class JobInfoTest extends TestCase
 		self::assertSame($extendedExpression, $info->getExtendedExpression());
 		self::assertSame($runSecond, $info->getRunSecond());
 		self::assertSame($start, $info->getStart());
+		self::assertSame($forcedRun, $info->isForcedRun());
 
 		self::assertSame(
 			[
@@ -47,6 +49,7 @@ final class JobInfoTest extends TestCase
 				'repeatAfterSeconds' => $repeatAfterSeconds,
 				'runSecond' => $runSecond,
 				'start' => $start->format('U.u e'),
+				'forcedRun' => $forcedRun,
 			],
 			$info->toArray(),
 		);
@@ -63,6 +66,7 @@ final class JobInfoTest extends TestCase
 			new DateTimeImmutable(),
 			null,
 			'* * * * *',
+			true,
 		];
 
 		yield [
@@ -74,6 +78,7 @@ final class JobInfoTest extends TestCase
 			new DateTimeImmutable(),
 			null,
 			'* * * * */5 / 10',
+			true,
 		];
 
 		yield [
@@ -85,6 +90,7 @@ final class JobInfoTest extends TestCase
 			new DateTimeImmutable(),
 			new DateTimeZone('Europe/Prague'),
 			'* * 6 9 * (Europe/Prague)',
+			false,
 		];
 
 		yield [
@@ -96,6 +102,7 @@ final class JobInfoTest extends TestCase
 			new DateTimeImmutable(),
 			new DateTimeZone('UTC'),
 			'* 1 9 8 4 / 30 (UTC)',
+			false,
 		];
 	}
 

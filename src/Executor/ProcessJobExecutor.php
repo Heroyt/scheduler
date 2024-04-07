@@ -82,7 +82,7 @@ final class ProcessJobExecutor implements JobExecutor
 						$jobExecutions = $this->startJobs(
 							$jobSchedulesBySecond[$currentSecond],
 							$jobExecutions,
-							new RunParameters($currentSecond),
+							new RunParameters($currentSecond, false),
 						);
 						unset($jobSchedulesBySecond[$currentSecond]);
 					}
@@ -182,6 +182,7 @@ final class ProcessJobExecutor implements JobExecutor
 				$raw['info']['runSecond'],
 				DateTimeImmutable::createFromFormat('U.u e', $raw['info']['start']),
 				$jobSchedule->getTimeZone(),
+				$raw['info']['forcedRun'],
 			),
 			new JobResult(
 				$jobSchedule->getExpression(),

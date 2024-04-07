@@ -240,7 +240,7 @@ MSG,
 		$tester->execute([
 			'id' => 0,
 			'--json' => true,
-			'--parameters' => json_encode((new RunParameters(30))->toArray(), JSON_THROW_ON_ERROR),
+			'--parameters' => json_encode((new RunParameters(30, false))->toArray(), JSON_THROW_ON_ERROR),
 		]);
 
 		self::assertSame(
@@ -252,7 +252,8 @@ MSG,
         "expression": "1 * * * *",
         "repeatAfterSeconds": 0,
         "runSecond": 30,
-        "start": "61.000000 Europe\/Prague"
+        "start": "61.000000 Europe\/Prague",
+        "forcedRun": false
     },
     "result": {
         "end": "61.000000 Europe\/Prague",
@@ -311,7 +312,8 @@ MSG,
         "expression": "* * * * *",
         "repeatAfterSeconds": 0,
         "runSecond": 0,
-        "start": "1.000000 Europe\/Prague"
+        "start": "1.000000 Europe\/Prague",
+        "forcedRun": true
     },
     "result": {
         "end": "1.000000 Europe\/Prague",

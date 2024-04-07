@@ -25,6 +25,8 @@ final class JobInfo
 
 	private ?DateTimeZone $timeZone;
 
+	private bool $forcedRun;
+
 	/**
 	 * @param string|int  $id
 	 * @param int<0, 30>  $repeatAfterSeconds
@@ -37,7 +39,8 @@ final class JobInfo
 		int $repeatAfterSeconds,
 		int $runSecond,
 		DateTimeImmutable $start,
-		?DateTimeZone $timeZone
+		?DateTimeZone $timeZone,
+		bool $forcedRun
 	)
 	{
 		$this->id = $id;
@@ -47,6 +50,7 @@ final class JobInfo
 		$this->runSecond = $runSecond;
 		$this->start = $start;
 		$this->timeZone = $timeZone;
+		$this->forcedRun = $forcedRun;
 	}
 
 	/**
@@ -111,6 +115,11 @@ final class JobInfo
 		return $this->timeZone;
 	}
 
+	public function isForcedRun(): bool
+	{
+		return $this->forcedRun;
+	}
+
 	/**
 	 * @return array<mixed>
 	 */
@@ -123,6 +132,7 @@ final class JobInfo
 			'repeatAfterSeconds' => $this->getRepeatAfterSeconds(),
 			'runSecond' => $this->getRunSecond(),
 			'start' => $this->getStart()->format('U.u e'),
+			'forcedRun' => $this->forcedRun,
 		];
 	}
 

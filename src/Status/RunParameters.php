@@ -11,12 +11,15 @@ final class RunParameters
 	/** @var int<0, max> */
 	private int $second;
 
+	private bool $forcedRun;
+
 	/**
 	 * @param int<0, max> $second
 	 */
-	public function __construct(int $second)
+	public function __construct(int $second, bool $forcedRun)
 	{
 		$this->second = $second;
+		$this->forcedRun = $forcedRun;
 	}
 
 	/**
@@ -24,7 +27,7 @@ final class RunParameters
 	 */
 	public static function fromArray(array $raw): self
 	{
-		return new self($raw['second']);
+		return new self($raw['second'], $raw['forcedRun']);
 	}
 
 	/**
@@ -35,6 +38,11 @@ final class RunParameters
 		return $this->second;
 	}
 
+	public function isForcedRun(): bool
+	{
+		return $this->forcedRun;
+	}
+
 	/**
 	 * @return array<mixed>
 	 */
@@ -42,6 +50,7 @@ final class RunParameters
 	{
 		return [
 			'second' => $this->second,
+			'forcedRun' => $this->forcedRun,
 		];
 	}
 

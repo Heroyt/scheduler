@@ -15,7 +15,7 @@ final class JobSummaryTest extends TestCase
 
 	public function test(): void
 	{
-		$info = new JobInfo('id', 'name', '* * * * *', 0, 0, new DateTimeImmutable(), null);
+		$info = new JobInfo('id', 'name', '* * * * *', 0, 0, new DateTimeImmutable(), null, false);
 		$result = new JobResult(
 			new CronExpression('* * * * *'),
 			new DateTimeImmutable(),

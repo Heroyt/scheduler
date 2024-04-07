@@ -86,7 +86,7 @@ class ManagedScheduler implements Scheduler
 			fn ($id, JobSchedule $jobSchedule, int $runSecond): array => $this->runInternal(
 				$id,
 				$jobSchedule,
-				$runSecond,
+				new RunParameters($runSecond, false),
 			),
 		);
 	}
@@ -99,7 +99,7 @@ class ManagedScheduler implements Scheduler
 	public function runJob($id, bool $force = true, ?RunParameters $parameters = null): ?JobSummary
 	{
 		$jobSchedule = $this->jobManager->getJobSchedule($id);
-		$parameters ??= new RunParameters(0);
+		$parameters ??= new RunParameters(0, $force);
 
 		if ($jobSchedule === null) {
 			$message = Message::create()
@@ -126,7 +126,7 @@ class ManagedScheduler implements Scheduler
 			return null;
 		}
 
-		[$summary, $throwable] = $this->runInternal($id, $jobSchedule, $parameters->getSecond());
+		[$summary, $throwable] = $this->runInternal($id, $jobSchedule, $parameters);
 
 		if ($throwable !== null) {
 			throw JobFailure::create($summary, $throwable);
@@ -238,10 +238,9 @@ class ManagedScheduler implements Scheduler
 
 	/**
 	 * @param string|int  $id
-	 * @param int<0, max> $runSecond
 	 * @return array{JobSummary, Throwable|null}
 	 */
-	private function runInternal($id, JobSchedule $jobSchedule, int $runSecond): array
+	private function runInternal($id, JobSchedule $jobSchedule, RunParameters $runParameters): array
 	{
 		$job = $jobSchedule->getJob();
 		$expression = $jobSchedule->getExpression();
@@ -251,9 +250,10 @@ class ManagedScheduler implements Scheduler
 			$job->getName(),
 			$expression->getExpression(),
 			$jobSchedule->getRepeatAfterSeconds(),
-			$runSecond,
+			$runParameters->getSecond(),
 			$this->getCurrentTime($jobSchedule),
 			$jobSchedule->getTimeZone(),
+			$runParameters->isForcedRun(),
 		);
 
 		$lock = $this->lockFactory->createLock("Orisai.Scheduler.Job/$id");
