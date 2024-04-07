@@ -743,12 +743,21 @@ Options:
 
 Run scheduler repeatedly, once every minute
 
+> This command should be used only for local development and requires interactive CLI.
+> In production environment should be used crontab with the [run command](#run-command).
+
 `bin/console scheduler:worker`
 
 - requires [proc_*](https://www.php.net/manual/en/ref.exec.php) functions to be enabled
 - if your executable script is not `bin/console` or if you are using multiple scheduler setups, specify the executable:
 	- via `your/console scheduler:worker -s=your/console -c=scheduler:run`
 	- or via setter `$workerCommand->setExecutable('your/console', 'scheduler:run')`
+
+Options:
+
+- `--script=<script>` (or `-s`) - script executed by worker (defaults to `bin/console`)
+- `--command=<command>` (or `-c`) - command executed by worker (defaults to `scheduler:run`)
+- `--force` - force run when non-interactive CLI is detected (!make sure you can terminate the worker!)
 
 ### Explain command
 

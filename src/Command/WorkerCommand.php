@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use function assert;
+use function is_bool;
 use function ltrim;
 use function usleep;
 use const PHP_BINARY;
@@ -72,14 +73,31 @@ final class WorkerCommand extends Command
 			InputOption::VALUE_REQUIRED,
 			'Name of executed command',
 		);
+		$this->addOption(
+			'force',
+			null,
+			InputOption::VALUE_NONE,
+			'Force run in non-interactive environment',
+		);
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
-		$output->writeln('<info>Running scheduled tasks every minute.</info>');
-
 		$script = $input->getOption('script') ?? $this->script;
 		$command = $input->getOption('command') ?? $this->command;
+		$force = $input->getOption('force');
+		assert(is_bool($force));
+
+		if (!$force && !$input->isInteractive()) {
+			$output->writeln(
+				'<error>CLI is non-interactive. If you are sure you can terminate the worker and want to'
+				. ' bypass limitation, then use the --force option.</error>',
+			);
+
+			return self::FAILURE;
+		}
+
+		$output->writeln('<info>Running scheduled tasks every minute.</info>');
 
 		$lastExecutionStartedAt = $this->nullSeconds($this->clock->now()->modify('-1 minute'));
 		$executions = [];

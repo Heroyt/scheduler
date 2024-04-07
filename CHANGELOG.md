@@ -34,6 +34,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `ListCommand`
 	- more compact render
 	- sort jobs by keys instead of generated names
+- `WorkerCommand`
+	- requires interactive CLI
+	- `--force` option to bypass interactive CLI requirement
 
 ### Fixed
 

@@ -24,7 +24,7 @@ final class WorkerCommandTest extends TestCase
 		$tester = new CommandTester($command);
 
 		putenv('COLUMNS=80');
-		$tester->execute([]);
+		$tester->execute([], ['interactive' => true]);
 
 		self::assertSame(
 			<<<'MSG'
@@ -47,7 +47,7 @@ MSG,
 		putenv('COLUMNS=80');
 		$tester->execute([
 			'--script' => 'tests/Unit/Command/worker-binary.php',
-		]);
+		], ['interactive' => true]);
 
 		self::assertSame($command::SUCCESS, $tester->getStatusCode());
 		self::assertCount(4, explode(PHP_EOL, $tester->getDisplay()));
@@ -63,7 +63,7 @@ MSG,
 		$tester = new CommandTester($command);
 
 		putenv('COLUMNS=80');
-		$tester->execute([]);
+		$tester->execute([], ['interactive' => true]);
 
 		self::assertSame($command::SUCCESS, $tester->getStatusCode());
 		self::assertCount(4, explode(PHP_EOL, $tester->getDisplay()));
@@ -80,7 +80,7 @@ MSG,
 		putenv('COLUMNS=80');
 		$tester->execute([
 			'--script' => 'tests/Unit/Command/worker-binary.php',
-		]);
+		], ['interactive' => true]);
 
 		self::assertSame($command::SUCCESS, $tester->getStatusCode());
 		self::assertCount(6, explode(PHP_EOL, $tester->getDisplay()));
@@ -97,7 +97,7 @@ MSG,
 		putenv('COLUMNS=80');
 		$tester->execute([
 			'--script' => 'tests/Unit/Command/worker-binary-no-matching-jobs.php',
-		]);
+		], ['interactive' => true]);
 
 		self::assertSame($command::SUCCESS, $tester->getStatusCode());
 		self::assertSame(
@@ -118,13 +118,57 @@ MSG,
 		$tester = new CommandTester($command);
 
 		putenv('COLUMNS=80');
-		$tester->execute([]);
+		$tester->execute([], ['interactive' => true]);
 
 		self::assertSame(
 			<<<'MSG'
 Running scheduled tasks every minute.
 Could not open input file: bin/console
 Could not open input file: bin/console
+
+MSG,
+			CommandOutputHelper::getCommandOutput($tester),
+		);
+		self::assertSame($command::SUCCESS, $tester->getStatusCode());
+	}
+
+	public function testNonInteractive(): void
+	{
+		$clock = new FrozenClock(1_020, new DateTimeZone('Europe/Prague'));
+
+		$command = new WorkerCommand($clock);
+		$command->enableTestMode(0, static fn () => $clock->sleep(60));
+		$tester = new CommandTester($command);
+
+		putenv('COLUMNS=80');
+		$tester->execute([], ['interactive' => false]);
+
+		self::assertSame(
+			<<<'MSG'
+CLI is non-interactive. If you are sure you can terminate the worker and want to bypass limitation, then use the --force option.
+
+MSG,
+			CommandOutputHelper::getCommandOutput($tester),
+		);
+		self::assertSame($command::FAILURE, $tester->getStatusCode());
+	}
+
+	public function testNonInteractiveForce(): void
+	{
+		$clock = new FrozenClock(1_020, new DateTimeZone('Europe/Prague'));
+
+		$command = new WorkerCommand($clock);
+		$command->enableTestMode(0, static fn () => $clock->sleep(60));
+		$tester = new CommandTester($command);
+
+		putenv('COLUMNS=80');
+		$tester->execute([
+			'--force' => true,
+		], ['interactive' => false]);
+
+		self::assertSame(
+			<<<'MSG'
+Running scheduled tasks every minute.
 
 MSG,
 			CommandOutputHelper::getCommandOutput($tester),
