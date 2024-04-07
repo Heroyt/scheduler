@@ -6,21 +6,6 @@ parameters:
 			path: ../src/Command/ExplainCommand.php
 
 		-
-			message: "#^Parameter \\#1 \\$expression of method Orisai\\\\CronExpressionExplainer\\\\CronExpressionExplainer\\:\\:explain\\(\\) expects string, string\\|null given\\.$#"
-			count: 1
-			path: ../src/Command/ListCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$input of function str_pad expects string, string\\|null given\\.$#"
-			count: 1
-			path: ../src/Command/ListCommand.php
-
-		-
-			message: "#^Parameter \\#1 \\$str of function mb_strlen expects string, string\\|null given\\.$#"
-			count: 1
-			path: ../src/Command/ListCommand.php
-
-		-
 			message: "#^Only booleans are allowed in a ternary operator condition, mixed given\\.$#"
 			count: 1
 			path: ../src/Command/RunCommand.php

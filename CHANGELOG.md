@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `JobInfo`
 	- `getExtendedExpression()` includes seconds only if seconds are used
 	- `getExtendedExpression()` includes timezone if timezone is used
+- `ListCommand`
+	- more compact render
 
 ### Fixed
 

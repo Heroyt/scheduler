@@ -2,7 +2,6 @@
 
 namespace Orisai\Scheduler\Command;
 
-use Cron\CronExpression;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
@@ -26,13 +25,10 @@ use function max;
 use function mb_strlen;
 use function preg_match;
 use function sprintf;
-use function str_pad;
 use function str_repeat;
-use function strlen;
 use function strnatcmp;
 use function timezone_identifiers_list;
 use function uasort;
-use const STR_PAD_LEFT;
 
 final class ListCommand extends BaseExplainCommand
 {
@@ -93,19 +89,38 @@ final class ListCommand extends BaseExplainCommand
 			return self::SUCCESS;
 		}
 
-		$terminalWidth = $this->getTerminalWidth();
-		$expressionSpacing = $this->getCronExpressionSpacing($jobSchedules);
-		$repeatAfterSecondsSpacing = $this->getRepeatAfterSecondsSpacing($jobSchedules);
-		$timeZoneSpacing = $this->getTimeZoneSpacing($jobSchedules, $timeZone);
+		$maxExpressionLength = 0;
+		$data = [];
+		foreach ($jobSchedules as $id => $jobSchedule) {
+			$expressionString = (string) $jobSchedule->getExpression();
 
-		foreach ($this->sortJobs($jobSchedules, $nextOption, $timeZone) as $key => $jobSchedule) {
-			$expressionString = $this->formatCronExpression($jobSchedule->getExpression(), $expressionSpacing);
-			$repeatAfterSecondsString = $this->formatRepeatAfterSeconds(
-				$jobSchedule->getRepeatAfterSeconds(),
-				$repeatAfterSecondsSpacing,
-			);
+			$seconds = $jobSchedule->getRepeatAfterSeconds();
+			$secondsString = $seconds !== 0 ? " / $seconds" : '';
+
 			$computedTimeZone = $this->computeTimeZone($jobSchedule, $timeZone);
-			$timeZoneString = $this->formatTimeZone($computedTimeZone, $timeZoneSpacing);
+			$timeZoneString = $computedTimeZone !== null ? " ({$computedTimeZone->getName()})" : '';
+
+			$expressionLength = mb_strlen($expressionString . $secondsString . $timeZoneString);
+
+			$data[$id] = [
+				$expressionString,
+				$secondsString,
+				$timeZoneString,
+				$expressionLength,
+				$computedTimeZone,
+			];
+
+			if ($expressionLength > $maxExpressionLength) {
+				$maxExpressionLength = $expressionLength;
+			}
+		}
+
+		$terminalWidth = $this->getTerminalWidth();
+
+		foreach ($this->sortJobs($jobSchedules, $nextOption, $timeZone) as $id => $jobSchedule) {
+			[$expressionString, $repeatAfterSecondsString, $timeZoneString, $expressionLength, $computedTimeZone] = $data[$id];
+
+			$expressionPadding = str_repeat(' ', $maxExpressionLength - $expressionLength);
 
 			$name = $jobSchedule->getJob()->getName();
 
@@ -120,18 +135,19 @@ final class ListCommand extends BaseExplainCommand
 				max(
 				/* @infection-ignore-all */
 					$terminalWidth - mb_strlen(
-						$expressionString . $repeatAfterSecondsString . $timeZoneString . $key . $name . $nextDueDateLabel . $nextDueDate,
-					) - 9,
+						$expressionPadding . $id . $name . $nextDueDateLabel . $nextDueDate,
+					) - $expressionLength - 8,
 					0,
 				),
 			);
 
 			$output->writeln(sprintf(
-				'  <fg=yellow>%s</><fg=#6C7280>%s</>%s  [%s] %s<fg=#6C7280>%s %s %s</>',
+				'  <fg=yellow>%s</><fg=#6C7280>%s</>%s%s [%s] %s<fg=#6C7280>%s %s %s</>',
 				$expressionString,
 				$repeatAfterSecondsString,
 				$timeZoneString,
-				$key,
+				$expressionPadding,
+				$id,
 				$name,
 				$dots,
 				$nextDueDateLabel,
@@ -140,13 +156,13 @@ final class ListCommand extends BaseExplainCommand
 
 			if ($explain !== false) {
 				$explainedExpression = $this->explainer->explain(
-					$jobSchedule->getExpression()->getExpression(),
+					(string) $jobSchedule->getExpression(),
 					$jobSchedule->getRepeatAfterSeconds(),
 					$computedTimeZone,
 					$explain,
 				);
 
-				$output->writeln($explainedExpression);
+				$output->writeln('    ' . $explainedExpression);
 			}
 		}
 
@@ -355,102 +371,6 @@ final class ListCommand extends BaseExplainCommand
 		}
 
 		return $return;
-	}
-
-	/**
-	 * @param array<int|string, JobSchedule> $jobSchedules
-	 *
-	 * @infection-ignore-all
-	 */
-	private function getCronExpressionSpacing(array $jobSchedules): int
-	{
-		$max = 0;
-		foreach ($jobSchedules as $jobSchedule) {
-			$length = mb_strlen($jobSchedule->getExpression()->getExpression());
-			if ($length > $max) {
-				$max = $length;
-			}
-		}
-
-		return $max;
-	}
-
-	private function formatCronExpression(CronExpression $expression, int $spacing): string
-	{
-		return str_pad($expression->getExpression(), $spacing, ' ', STR_PAD_LEFT);
-	}
-
-	/**
-	 * @param array<int|string, JobSchedule> $jobSchedules
-	 *
-	 * @infection-ignore-all
-	 */
-	private function getRepeatAfterSecondsSpacing(array $jobSchedules): int
-	{
-		$max = 0;
-		foreach ($jobSchedules as $jobSchedule) {
-			$repeatAfterSeconds = $jobSchedule->getRepeatAfterSeconds();
-			if ($repeatAfterSeconds === 0) {
-				continue;
-			}
-
-			$length = strlen((string) $repeatAfterSeconds);
-			if ($length > $max) {
-				$max = $length;
-			}
-		}
-
-		if ($max !== 0) {
-			$max += 3;
-		}
-
-		return $max;
-	}
-
-	private function formatRepeatAfterSeconds(int $repeatAfterSeconds, int $spacing): string
-	{
-		if ($repeatAfterSeconds === 0) {
-			return str_pad('', $spacing);
-		}
-
-		return str_pad(" / $repeatAfterSeconds", $spacing);
-	}
-
-	/**
-	 * @param array<int|string, JobSchedule> $jobSchedules
-	 *
-	 * @infection-ignore-all
-	 */
-	private function getTimeZoneSpacing(array $jobSchedules, DateTimeZone $renderedTimeZone): int
-	{
-		$max = 0;
-		foreach ($jobSchedules as $jobSchedule) {
-			$timeZone = $this->computeTimeZone($jobSchedule, $renderedTimeZone);
-
-			if ($timeZone === null) {
-				continue;
-			}
-
-			$length = strlen($timeZone->getName());
-			if ($length > $max) {
-				$max = $length;
-			}
-		}
-
-		if ($max !== 0) {
-			$max += 3;
-		}
-
-		return $max;
-	}
-
-	private function formatTimeZone(?DateTimeZone $timeZone, int $spacing): string
-	{
-		if ($timeZone === null) {
-			return str_pad('', $spacing);
-		}
-
-		return str_pad(" ({$timeZone->getName()})", $spacing);
 	}
 
 	private function getTerminalWidth(): int
