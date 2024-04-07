@@ -78,6 +78,9 @@ final class WorkerCommand extends Command
 	{
 		$output->writeln('<info>Running scheduled tasks every minute.</info>');
 
+		$script = $input->getOption('script') ?? $this->script;
+		$command = $input->getOption('command') ?? $this->command;
+
 		$lastExecutionStartedAt = $this->nullSeconds($this->clock->now()->modify('-1 minute'));
 		$executions = [];
 		while (true) {
@@ -92,8 +95,8 @@ final class WorkerCommand extends Command
 			) {
 				$executions[] = $execution = new Process([
 					PHP_BINARY,
-					$input->getOption('script') ?? $this->script,
-					$input->getOption('command') ?? $this->command,
+					$script,
+					$command,
 				]);
 
 				// @codeCoverageIgnoreStart
