@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 	- `getExtendedExpression()` includes timezone if timezone is used
 - `ListCommand`
 	- more compact render
+	- sort jobs by keys instead of generated names
 
 ### Fixed
 

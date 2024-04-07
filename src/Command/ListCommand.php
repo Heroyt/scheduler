@@ -21,14 +21,15 @@ use function in_array;
 use function is_bool;
 use function is_int;
 use function is_string;
+use function ksort;
 use function max;
 use function mb_strlen;
 use function preg_match;
 use function sprintf;
 use function str_repeat;
-use function strnatcmp;
 use function timezone_identifiers_list;
 use function uasort;
+use const SORT_NATURAL;
 
 final class ListCommand extends BaseExplainCommand
 {
@@ -274,17 +275,7 @@ final class ListCommand extends BaseExplainCommand
 				$jobSchedules = $slicedJobs;
 			}
 		} else {
-			/** @infection-ignore-all */
-			uasort($jobSchedules, static function (JobSchedule $a, JobSchedule $b): int {
-				$nameA = $a->getJob()->getName();
-				$nameB = $b->getJob()->getName();
-
-				if ($nameA === $nameB) {
-					return 0;
-				}
-
-				return strnatcmp($nameA, $nameB);
-			});
+			ksort($jobSchedules, SORT_NATURAL);
 		}
 
 		return $jobSchedules;
