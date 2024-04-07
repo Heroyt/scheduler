@@ -163,7 +163,8 @@ final class ListCommand extends BaseExplainCommand
 					$explain,
 				);
 
-				$output->writeln('    ' . $explainedExpression);
+				$output->writeln("  <fg=#57534E>$explainedExpression</>");
+				$output->writeln('');
 			}
 		}
 

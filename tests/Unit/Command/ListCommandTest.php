@@ -449,13 +449,17 @@ MSG,
 		self::assertSame(
 			$explainDefault = <<<'MSG'
   * * * * *                            [0] Tests\Orisai\Scheduler\Doubles\CallbackList::job1() Next Due: 59 seconds
-    At every minute.
+  At every minute.
+
   */30 7-15 * * 1-5 (America/New_York) [1] Tests\Orisai\Scheduler\Doubles\CallbackList::job1() Next Due: 5 hours
-    At every 30th minute past every hour from 7 through 15 on every day-of-week from Monday through Friday in America/New_York time zone.
+  At every 30th minute past every hour from 7 through 15 on every day-of-week from Monday through Friday in America/New_York time zone.
+
   * * * 4 * / 10                       [2] Tests\Orisai\Scheduler\Doubles\CallbackList::__invoke() Next Due: 2 months
-    At every 10 seconds in April.
+  At every 10 seconds in April.
+
   * * * 3 * / 15 (America/New_York)    [3] Tests\Orisai\Scheduler\Doubles\CallbackList::__invoke() Next Due: 1 month
-    At every 15 seconds in March in America/New_York time zone.
+  At every 15 seconds in March in America/New_York time zone.
+
 
 MSG,
 			CommandOutputHelper::getCommandOutput($tester),
