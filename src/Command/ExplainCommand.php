@@ -51,10 +51,10 @@ final class ExplainCommand extends BaseExplainCommand
 		$this->addOption('seconds', 's', InputOption::VALUE_REQUIRED, 'Repeat every n seconds');
 		$this->addOption('timezone', 'tz', InputOption::VALUE_REQUIRED, 'The timezone time should be displayed in');
 		$this->addOption(
-			'language',
+			'locale',
 			'l',
 			InputOption::VALUE_REQUIRED,
-			"Translate expression in given language - {$this->getSupportedLanguages()}",
+			"Translate expression in given locale - {$this->getSupportedLocales()}",
 		);
 	}
 
@@ -69,21 +69,21 @@ final class ExplainCommand extends BaseExplainCommand
 		$expression = $options['expression'];
 		$seconds = $options['seconds'];
 		$timezone = $options['timezone'];
-		$language = $options['language'];
+		$locale = $options['locale'];
 
 		if ($id !== null) {
 			return $this->explainJobWithId($id, $output);
 		}
 
 		if ($expression !== null) {
-			return $this->explainExpression($expression, $seconds, $timezone, $language, $output);
+			return $this->explainExpression($expression, $seconds, $timezone, $locale, $output);
 		}
 
 		return $this->explainSyntax($output);
 	}
 
 	/**
-	 * @return array{id: string|null, expression: string|null, seconds: int<0, 59>|null, timezone: DateTimeZone|null, language: string|null}|null
+	 * @return array{id: string|null, expression: string|null, seconds: int<0, 59>|null, timezone: DateTimeZone|null, locale: string|null}|null
 	 */
 	private function validateOptions(InputInterface $input, OutputInterface $output): ?array
 	{
@@ -135,20 +135,20 @@ final class ExplainCommand extends BaseExplainCommand
 			}
 		}
 
-		$language = $input->getOption('language');
-		assert($language === null || is_string($language));
-		if ($language !== null) {
-			if (!array_key_exists($language, $this->explainer->getSupportedLanguages())) {
+		$locale = $input->getOption('locale');
+		assert($locale === null || is_string($locale));
+		if ($locale !== null) {
+			if (!array_key_exists($locale, $this->explainer->getSupportedLocales())) {
 				$hasErrors = true;
 				$output->writeln(
-					"<error>Option --language expects no value or one of supported languages, '$language' given."
-					. ' Use --help to list available languages.</error>',
+					"<error>Option --locale expects no value or one of supported locales, '$locale' given."
+					. ' Use --help to list available locales.</error>',
 				);
 			}
 
 			if ($expression === null) {
 				$hasErrors = true;
-				$output->writeln('<error>Option --language must be used with --expression.</error>');
+				$output->writeln('<error>Option --locale must be used with --expression.</error>');
 			}
 		}
 
@@ -165,7 +165,7 @@ final class ExplainCommand extends BaseExplainCommand
 			'expression' => $expression,
 			'seconds' => $seconds,
 			'timezone' => $timezone,
-			'language' => $language,
+			'locale' => $locale,
 		];
 	}
 
@@ -176,7 +176,7 @@ final class ExplainCommand extends BaseExplainCommand
 		string $expression,
 		?int $seconds,
 		?DateTimeZone $timeZone,
-		?string $language,
+		?string $locale,
 		OutputInterface $output
 	): int
 	{
@@ -185,7 +185,7 @@ final class ExplainCommand extends BaseExplainCommand
 				$expression,
 				$seconds,
 				$timeZone,
-				$language,
+				$locale,
 			));
 		} catch (UnsupportedExpression $exception) {
 			$output->writeln("<error>{$exception->getMessage()}</error>");

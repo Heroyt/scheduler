@@ -235,7 +235,7 @@ MSG,
 		yield [
 			[
 				'--expression' => '* * * * *',
-				'--language' => 'en',
+				'--locale' => 'en',
 			],
 			<<<'MSG'
 At every minute.
@@ -366,20 +366,20 @@ MSG,
 		yield [
 			[
 				'--expression' => '* * * *',
-				'--language' => 'noop',
+				'--locale' => 'noop',
 			],
 			<<<'MSG'
-Option --language expects no value or one of supported languages, 'noop' given. Use --help to list available languages.
+Option --locale expects no value or one of supported locales, 'noop' given. Use --help to list available locales.
 
 MSG,
 		];
 
 		yield [
 			[
-				'--language' => 'en',
+				'--locale' => 'en',
 			],
 			<<<'MSG'
-Option --language must be used with --expression.
+Option --locale must be used with --expression.
 
 MSG,
 		];
@@ -389,15 +389,15 @@ MSG,
 				'--id' => 'id',
 				'--seconds' => 'bad seconds',
 				'--timezone' => 'bad timezone',
-				'--language' => 'noop',
+				'--locale' => 'noop',
 			],
 			<<<'MSG'
 Option --seconds expects an int<0, 59>, 'bad seconds' given.
 Option --seconds must be used with --expression.
 Option --timezone expects a valid timezone, 'bad timezone' given.
 Option --timezone must be used with --expression.
-Option --language expects no value or one of supported languages, 'noop' given. Use --help to list available languages.
-Option --language must be used with --expression.
+Option --locale expects no value or one of supported locales, 'noop' given. Use --help to list available locales.
+Option --locale must be used with --expression.
 
 MSG,
 		];

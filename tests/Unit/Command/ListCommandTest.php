@@ -322,7 +322,7 @@ MSG,
 				'--explain' => 'noop',
 			],
 			<<<'MSG'
-Option --explain expects no value or one of supported languages, 'noop' given. Use --help to list available languages.
+Option --explain expects no value or one of supported locales, 'noop' given. Use --help to list available locales.
 
 MSG,
 		];
@@ -336,7 +336,7 @@ MSG,
 			<<<'MSG'
 Option --next expects an int<1, max>, '0' given.
 Option --timezone expects a valid timezone, 'bad-timezone' given.
-Option --explain expects no value or one of supported languages, 'noop' given. Use --help to list available languages.
+Option --explain expects no value or one of supported locales, 'noop' given. Use --help to list available locales.
 
 MSG,
 		];

@@ -28,12 +28,12 @@ abstract class BaseExplainCommand extends Command
 		parent::__construct();
 	}
 
-	protected function getSupportedLanguages(): string
+	protected function getSupportedLocales(): string
 	{
 		$string = '';
-		$languages = $this->explainer->getSupportedLanguages();
-		$last = array_key_last($languages);
-		foreach ($languages as $code => $name) {
+		$locales = $this->explainer->getSupportedLocales();
+		$last = array_key_last($locales);
+		foreach ($locales as $code => $name) {
 			$string .= "$code ($name)";
 			if ($code !== $last) {
 				$string .= ', ';

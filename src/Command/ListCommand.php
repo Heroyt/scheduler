@@ -66,7 +66,7 @@ final class ListCommand extends BaseExplainCommand
 			'explain',
 			null,
 			InputOption::VALUE_OPTIONAL,
-			"Explain expression - {$this->getSupportedLanguages()}",
+			"Explain expression - {$this->getSupportedLocales()}",
 			false,
 		);
 	}
@@ -212,12 +212,12 @@ final class ListCommand extends BaseExplainCommand
 		assert($explain === null || $explain === false || is_string($explain));
 		if (
 			is_string($explain)
-			&& !array_key_exists($explain, $this->explainer->getSupportedLanguages())
+			&& !array_key_exists($explain, $this->explainer->getSupportedLocales())
 		) {
 			$hasErrors = true;
 			$output->writeln(
-				"<error>Option --explain expects no value or one of supported languages, '$explain' given."
-				. ' Use --help to list available languages.</error>',
+				"<error>Option --explain expects no value or one of supported locales, '$explain' given."
+				. ' Use --help to list available locales.</error>',
 			);
 		}
 
