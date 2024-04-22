@@ -135,7 +135,8 @@ $scheduler->addJob(
 ```
 
 It's important to use caution with cron syntax, so please refer to the example below.
-To validate your cron, you can also utilize [crontab.guru](https://crontab.guru).
+To validate your cron, you can also utilize [explain command](#explain-command) or
+the [explainer](https://github.com/orisai/cron-expression-explainer) directly.
 
 ```
 *   *   *   *   *
