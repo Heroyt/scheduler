@@ -234,6 +234,7 @@ Each part of expression can also use wildcard, lists, ranges and steps:
 
 - wildcard - match always
   - e.g. <fg=yellow>* * * * *</> - At every minute.
+  - day of week and day of month also support <fg=yellow>?</>, an alias to <fg=yellow>*</>
 - lists - match list of values, ranges and steps
   - e.g. <fg=yellow>15,30 * * * *</> - At minute 15 and 30.
 - ranges - match values in range
@@ -251,6 +252,31 @@ You can also use macro instead of an expression:
 - <fg=yellow>@weekly</> - Run once a week, midnight on Sun (same as <fg=yellow>0 0 * * 0</>)
 - <fg=yellow>@daily</>, <fg=yellow>@midnight</> - Run once a day, midnight (same as <fg=yellow>0 0 * * *</>)
 - <fg=yellow>@hourly</> - Run once an hour, first minute (same as <fg=yellow>0 * * * *</>)
+
+Day of month extra features:
+
+- nearest weekday - weekday (Monday-Friday) nearest to the given day
+  - e.g. <fg=yellow>* * 15W * *</> - At every minute on a weekday nearest to the 15th.
+  - If you were to specify <fg=yellow>15W</> as the value, the meaning is: "the nearest weekday to the 15th of the month"
+    So if the 15th is a Saturday, the trigger will fire on Friday the 14th.
+    If the 15th is a Sunday, the trigger will fire on Monday the 16th.
+    If the 15th is a Tuesday, then it will fire on Tuesday the 15th.
+  - However, if you specify <fg=yellow>1W</> as the value for day-of-month,
+    and the 1st is a Saturday, the trigger will fire on Monday the 3rd,
+    as it will not 'jump' over the boundary of a month's days.
+- last day of the month
+  - e.g. <fg=yellow>* * L * *</> - At every minute on a last day-of-month.
+- last weekday of the month
+  - e.g. <fg=yellow>* * LW * *</> - At every minute on a last weekday.
+
+Day of week extra features:
+
+- nth day
+  - e.g. <fg=yellow>* * * * 7#4</> - At every minute on 4th Sunday.
+  - 1-5
+  - Every day of week repeats 4-5 times a month. To target the last one, use "last day" feature instead.
+- last day
+  - e.g. <fg=yellow>* * * * 7L</> - At every minute on the last Sunday.
 
 Although they are not part of cron expression syntax, you can also add to job:
 

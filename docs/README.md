@@ -153,6 +153,7 @@ Each part of expression can also use wildcard, lists, ranges and steps:
 
 - wildcard - match always
 	- `* * * * *` - At every minute.
+	- day of week and day of month also support `?`, an alias to `*`
 - lists - match list of values, ranges and steps
 	- e.g. `15,30 * * * *` - At minute 15 and 30.
 - ranges - match values in range
@@ -170,6 +171,31 @@ You can also use macro instead of an expression:
 - `@weekly` - Run once a week, midnight on Sun (same as `0 0 * * 0`)
 - `@daily`, `@midnight` - Run once a day, midnight (same as `0 0 * * *`)
 - `@hourly` - Run once an hour, first minute (same as `0 * * * *`)
+
+Day of month extra features:
+
+- nearest weekday - weekday (Monday-Friday) nearest to the given day
+	- e.g. `* * 15W * *` - At every minute on a weekday nearest to the 15th.
+	- If you were to specify `15W` as the value, the meaning is: "the nearest weekday to the 15th of the month"
+	  So if the 15th is a Saturday, the trigger will fire on Friday the 14th.
+	  If the 15th is a Sunday, the trigger will fire on Monday the 16th.
+	  If the 15th is a Tuesday, then it will fire on Tuesday the 15th.
+	- However, if you specify `1W` as the value for day-of-month,
+	  and the 1st is a Saturday, the trigger will fire on Monday the 3rd,
+	  as it will not 'jump' over the boundary of a month's days.
+- last day of the month
+	- e.g. `* * L * *` - At every minute on a last day-of-month.
+- last weekday of the month
+	- e.g. `* * LW * *` - At every minute on a last weekday.
+
+Day of week extra features:
+
+- nth day
+	- e.g. `* * * * 7#4` - At every minute on 4th Sunday.
+	- 1-5
+	- Every day of week repeats 4-5 times a month. To target the last one, use "last day" feature instead.
+- last day
+	- e.g. `* * * * 7L` - At every minute on the last Sunday.
 
 ### Seconds
 
