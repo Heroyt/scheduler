@@ -247,11 +247,11 @@ Each part of expression can also use wildcard, lists, ranges and steps:
 
 You can also use macro instead of an expression:
 
-- <fg=yellow>@yearly</>, <fg=yellow>@annually</> - Run once a year, midnight, Jan. 1 (same as <fg=yellow>0 0 1 1 *</>)
-- <fg=yellow>@monthly</> - Run once a month, midnight, first of month (same as <fg=yellow>0 0 1 * *</>)
-- <fg=yellow>@weekly</> - Run once a week, midnight on Sun (same as <fg=yellow>0 0 * * 0</>)
-- <fg=yellow>@daily</>, <fg=yellow>@midnight</> - Run once a day, midnight (same as <fg=yellow>0 0 * * *</>)
-- <fg=yellow>@hourly</> - Run once an hour, first minute (same as <fg=yellow>0 * * * *</>)
+- <fg=yellow>@yearly</>, <fg=yellow>@annually</> - At 00:00 on 1st of January. (same as <fg=yellow>0 0 1 1 *</>)
+- <fg=yellow>@monthly</> - At 00:00 on day-of-month 1. (same as <fg=yellow>0 0 1 * *</>)
+- <fg=yellow>@weekly</> - At 00:00 on Sunday. (same as <fg=yellow>0 0 * * 0</>)
+- <fg=yellow>@daily</>, <fg=yellow>@midnight</> - At 00:00. (same as <fg=yellow>0 0 * * *</>)
+- <fg=yellow>@hourly</> - At minute 0. (same as <fg=yellow>0 * * * *</>)
 
 Day of month extra features:
 

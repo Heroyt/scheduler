@@ -167,11 +167,11 @@ Each part of expression can also use wildcard, lists, ranges and steps:
 
 You can also use macro instead of an expression:
 
-- `@yearly`, `@annually` - Run once a year, midnight, Jan. 1 (same as `0 0 1 1 *`)
-- `@monthly` - Run once a month, midnight, first of month (same as `0 0 1 * *`)
-- `@weekly` - Run once a week, midnight on Sun (same as `0 0 * * 0`)
-- `@daily`, `@midnight` - Run once a day, midnight (same as `0 0 * * *`)
-- `@hourly` - Run once an hour, first minute (same as `0 * * * *`)
+- `@yearly`, `@annually` - At 00:00 on 1st of January. (same as `0 0 1 1 *`)
+- `@monthly` - At 00:00 on day-of-month 1. (same as `0 0 1 * *`)
+- `@weekly` - At 00:00 on Sunday. (same as `0 0 * * 0`)
+- `@daily`, `@midnight` - At 00:00. (same as `0 0 * * *`)
+- `@hourly` - At minute 0. (same as `0 * * * *`)
 
 Day of month extra features:
 
