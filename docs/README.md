@@ -23,7 +23,7 @@ Cron job scheduler - with locks, parallelism and more
 - [Job types](#job-types)
 	- [Callback job](#callback-job)
 	- [Custom job](#custom-job)
-	- [Symfony command job](#symfony-command-job)
+	- [Symfony console job](#symfony-console-job)
 - [Job info and result](#job-info-and-result)
 - [Run summary](#run-summary)
 - [Run single job](#run-single-job)
@@ -579,7 +579,7 @@ $scheduler->addJob(
 );
 ```
 
-### Symfony command job
+### Symfony console job
 
 Run [symfony/console](https://github.com/symfony/console) command as a job
 
@@ -588,9 +588,9 @@ Run [symfony/console](https://github.com/symfony/console) command as a job
   command, the exception
 
 ```php
-use Orisai\Scheduler\Job\SymfonyCommandJob;
+use Orisai\Scheduler\Job\SymfonyConsoleJob;
 
-$job = new SymfonyCommandJob($command, $application);
+$job = new SymfonyConsoleJob($command, $application);
 $scheduler->addJob(
 	$job,
 	/* ... */,

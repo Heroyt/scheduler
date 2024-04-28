@@ -13,7 +13,7 @@ use function array_merge;
 use function assert;
 use function is_numeric;
 
-final class SymfonyCommandJob implements Job
+final class SymfonyConsoleJob implements Job
 {
 
 	private Command $command;

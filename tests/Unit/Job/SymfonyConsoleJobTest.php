@@ -6,7 +6,7 @@ use Generator;
 use Orisai\Exceptions\Logic\InvalidState;
 use Orisai\Exceptions\Logic\NotImplemented;
 use Orisai\Scheduler\Job\JobLock;
-use Orisai\Scheduler\Job\SymfonyCommandJob;
+use Orisai\Scheduler\Job\SymfonyConsoleJob;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Lock\NoLock;
@@ -18,7 +18,7 @@ use Tests\Orisai\Scheduler\Doubles\TestParametrizedCommand;
 use Tests\Orisai\Scheduler\Doubles\TestSuccessCommand;
 use Tests\Orisai\Scheduler\Helpers\CommandOutputHelper;
 
-final class SymfonyCommandJobTest extends TestCase
+final class SymfonyConsoleJobTest extends TestCase
 {
 
 	public function testSuccess(): void
@@ -26,7 +26,7 @@ final class SymfonyCommandJobTest extends TestCase
 		$command = new TestSuccessCommand();
 		$application = new Application();
 		$application->add($command);
-		$job = new SymfonyCommandJob($command, $application);
+		$job = new SymfonyConsoleJob($command, $application);
 
 		self::assertStringMatchesFormat('symfony/console: %ctest:success%c', $job->getName());
 
@@ -39,7 +39,7 @@ final class SymfonyCommandJobTest extends TestCase
 		$command = new TestFailNoOutputCommand();
 		$application = new Application();
 		$application->add($command);
-		$job = new SymfonyCommandJob($command, $application);
+		$job = new SymfonyConsoleJob($command, $application);
 
 		self::assertStringMatchesFormat('symfony/console: %ctest:fail-no-output%c', $job->getName());
 
@@ -67,7 +67,7 @@ MSG,
 		$command = new TestFailOutputCommand();
 		$application = new Application();
 		$application->add($command);
-		$job = new SymfonyCommandJob($command, $application);
+		$job = new SymfonyConsoleJob($command, $application);
 
 		self::assertStringMatchesFormat('symfony/console: %ctest:fail-output%c', $job->getName());
 
@@ -101,7 +101,7 @@ MSG,
 		$command = new TestExceptionCommand($exceptionCode);
 		$application = new Application();
 		$application->add($command);
-		$job = new SymfonyCommandJob($command, $application);
+		$job = new SymfonyConsoleJob($command, $application);
 
 		self::assertStringMatchesFormat('symfony/console: %ctest:exception%c', $job->getName());
 
@@ -147,7 +147,7 @@ MSG,
 		$application->setAutoExit($autoExit);
 		$application->setCatchExceptions($catchExceptions);
 		$application->add($command);
-		$job = new SymfonyCommandJob($command, $application);
+		$job = new SymfonyConsoleJob($command, $application);
 
 		self::assertStringMatchesFormat('symfony/console: %ctest:exception%c', $job->getName());
 
@@ -176,7 +176,7 @@ MSG,
 		$command = new TestSuccessCommand();
 		$application = new Application();
 		$application->add($command);
-		$job = new SymfonyCommandJob($command, $application);
+		$job = new SymfonyConsoleJob($command, $application);
 		// Is ignored
 		$job->setCommandParameters(['command' => 'non-existent']);
 
@@ -192,7 +192,7 @@ MSG,
 		$command = new TestParametrizedCommand();
 		$application = new Application();
 		$application->add($command);
-		$job = new SymfonyCommandJob($command, $application);
+		$job = new SymfonyConsoleJob($command, $application);
 		$job->setCommandParameters([
 			'argument' => 'a',
 			'--option' => 'b',
@@ -213,7 +213,7 @@ MSG,
 		$command = new TestSuccessCommand();
 		$application = new Application();
 		$application->add($command);
-		$job = new SymfonyCommandJob($command, $application);
+		$job = new SymfonyConsoleJob($command, $application);
 		$job->setLockTtl(0.1);
 
 		$lock = new TestLock();

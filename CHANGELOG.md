@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 	- explains cron expression syntax
 - `ListCommand`
 	- adds `--explain` option to explain whole expression
-- `SymfonyCommandJob`
+- `SymfonyConsoleJob`
 - `JobInfo`
 	- `getTimeZone()` returns timezone job should run in
 	- `isForcedRun()`returns whether job was run via $scheduler->runJob() or scheduler:run-job command, ignoring the cron expression
