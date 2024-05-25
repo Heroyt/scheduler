@@ -15,8 +15,9 @@ final class TestParametrizedCommand extends Command
 	{
 		$this->setName('test:parameters');
 		$this->addArgument('argument', InputArgument::REQUIRED);
-		$this->addOption('option', null, InputOption::VALUE_REQUIRED);
-		$this->addOption('bool-option', null, InputOption::VALUE_NONE);
+		$this->addOption('value-option', null, InputOption::VALUE_REQUIRED);
+		$this->addOption('no-value-option', null, InputOption::VALUE_NONE);
+		$this->addOption('array-value-option', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED);
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output): int

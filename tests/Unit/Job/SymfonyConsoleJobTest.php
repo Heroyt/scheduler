@@ -151,13 +151,15 @@ MSG,
 		$application->add($command);
 		$job = new SymfonyConsoleJob($command, $application);
 		$job->setCommandParameters([
-			'argument' => 'a',
-			'--option' => 'b',
-			'--bool-option' => true,
+			'argument' => 'value',
+			'--value-option' => 'value',
+			'--no-value-option' => null,
+			'--array-value-option' => ['value1', 'value2'],
 		]);
 
 		self::assertStringMatchesFormat(
-			'symfony/console: %ctest:parameters%c a --option=b --bool-option=1',
+			'symfony/console: %ctest:parameters%c'
+			. ' value --value-option=value --no-value-option --array-value-option=value1 --array-value-option=value2',
 			$job->getName(),
 		);
 
