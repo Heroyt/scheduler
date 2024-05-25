@@ -17,6 +17,7 @@ use Tests\Orisai\Scheduler\Doubles\TestLock;
 use Tests\Orisai\Scheduler\Doubles\TestParametrizedCommand;
 use Tests\Orisai\Scheduler\Doubles\TestSuccessCommand;
 use Tests\Orisai\Scheduler\Helpers\CommandOutputHelper;
+use Throwable;
 
 final class SymfonyConsoleJobTest extends TestCase
 {
@@ -94,50 +95,6 @@ MSG,
 	}
 
 	/**
-	 * @dataProvider provideException
-	 */
-	public function testException(int $exceptionCode, int $commandCode): void
-	{
-		$command = new TestExceptionCommand($exceptionCode);
-		$application = new Application();
-		$application->add($command);
-		$job = new SymfonyConsoleJob($command, $application);
-
-		self::assertStringMatchesFormat('symfony/console: %ctest:exception%c', $job->getName());
-
-		$e = null;
-		try {
-			$job->run(new JobLock(new NoLock()));
-		} catch (InvalidState $e) {
-			// Handled bellow
-		}
-
-		self::assertNotNull($e);
-		self::assertSame($commandCode, $e->getCode());
-		self::assertStringMatchesFormat(
-			<<<MSG
-Context: Running command 'test:exception'.
-Problem: Run failed with code '$commandCode'.
-Output: Failure!
-
-Suppressed errors:
-- Orisai\Exceptions\Logic\NotImplemented created at %s with code $exceptionCode
-  Message
-MSG,
-			CommandOutputHelper::getCommandOutput($e->getMessage()),
-		);
-		self::assertInstanceOf(NotImplemented::class, $e->getPrevious());
-	}
-
-	public function provideException(): Generator
-	{
-		yield [0, 1];
-		yield [-1, 1];
-		yield [2, 2];
-		yield [256, 256];
-	}
-
-	/**
 	 * @dataProvider provideApplicationSettingsHaveNoEffect
 	 */
 	public function testApplicationSettingsHaveNoEffect(bool $autoExit, bool $catchExceptions): void
@@ -154,13 +111,13 @@ MSG,
 		$e = null;
 		try {
 			$job->run(new JobLock(new NoLock()));
-		} catch (InvalidState $e) {
+		} catch (Throwable $e) {
 			// Handled bellow
 		}
 
-		self::assertNotNull($e);
+		self::assertInstanceOf(NotImplemented::class, $e);
 		self::assertSame(1, $e->getCode());
-		self::assertInstanceOf(NotImplemented::class, $e->getPrevious());
+		self::assertNull($e->getPrevious());
 	}
 
 	public function provideApplicationSettingsHaveNoEffect(): Generator

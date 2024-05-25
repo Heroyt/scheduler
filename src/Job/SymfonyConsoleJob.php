@@ -8,10 +8,8 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Throwable;
 use function array_merge;
 use function assert;
-use function is_numeric;
 
 final class SymfonyConsoleJob implements Job
 {
@@ -64,12 +62,8 @@ final class SymfonyConsoleJob implements Job
 		$input = $this->createInput();
 		$output = new BufferedOutput();
 
-		try {
-			// Using doRun() to prevent auto-exiting and error-handling
-			$exitCode = $this->application->doRun($input, $output);
-		} catch (Throwable $commandException) {
-			$exitCode = $this->getExceptionCode($commandException);
-		}
+		// Using doRun() to prevent auto-exiting and error-handling
+		$exitCode = $this->application->doRun($input, $output);
 
 		$outputString = $output->fetch();
 
@@ -82,16 +76,9 @@ final class SymfonyConsoleJob implements Job
 				$message->with('Output', $outputString);
 			}
 
-			$exception = InvalidState::create()
+			throw InvalidState::create()
 				->withCode($exitCode)
 				->withMessage($message);
-
-			if (isset($commandException)) {
-				$exception->withPrevious($commandException)
-					->withSuppressed([$commandException]);
-			}
-
-			throw $exception;
 		}
 	}
 
@@ -101,23 +88,6 @@ final class SymfonyConsoleJob implements Job
 			[$this->command->getName()],
 			$this->parameters,
 		));
-	}
-
-	private function getExceptionCode(Throwable $exception): int
-	{
-		$exitCode = $exception->getCode();
-
-		if (is_numeric($exitCode)) {
-			$exitCode = (int) $exitCode;
-			if ($exitCode <= 0) {
-				$exitCode = 1;
-			}
-
-			return $exitCode;
-		}
-
-		/** @codeCoverageIgnore Hard to simulate, only php extensions can return non-int code */
-		return 1;
 	}
 
 }
