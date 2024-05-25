@@ -376,9 +376,13 @@ use Orisai\Scheduler\Status\JobResult;
 use Throwable;
 
 $errorHandler = function(Throwable $throwable, JobInfo $info, JobResult $result): void {
-	$this->logger->error("Job {$info->getName()} failed", [
+	$id = $info->getId();
+	$name = $info->getName();
+
+	$this->logger->error("Job [$id] $name failed", [
 		'exception' => $throwable,
-		'name' => $info->getName(),
+		'id' => $id,
+		'name' => $name,
 		'expression' => $info->getExtendedExpression(),
 		'runSecond' => $info->getRunSecond(),
 		'start' => $info->getStart()->format(DateTimeInterface::ATOM),
