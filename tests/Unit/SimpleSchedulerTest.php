@@ -1160,17 +1160,33 @@ MSG,
 		self::assertStringContainsString('Could not open input file: bin/console', $e->getMessage());
 
 		self::assertNotSame([], $e->getSuppressed());
-		foreach ($e->getSuppressed() as $suppressed) {
-			self::assertInstanceOf(JobProcessFailure::class, $suppressed);
-			self::assertStringMatchesFormat(
-				<<<'MSG'
+
+		if (version_compare(PHP_VERSION, '8.3.0') >= 1) {
+			// Cannot force a whitespace after the "stdout:" line -> using "%w" instead
+			$expectedErrorFormat = <<<'MSG'
+Context: Running job via command %a
+Problem: Job subprocess did not correctly write job result to stdout.
+Tip: Check the documentation for troubleshooting guide.
+Exit code: 1
+stdout:%w
+stderr: Could not open input file: bin/console
+MSG;
+		}
+		else {
+			$expectedErrorFormat = <<<'MSG'
 Context: Running job via command %a
 Problem: Job subprocess did not correctly write job result to stdout.
 Tip: Check the documentation for troubleshooting guide.
 Exit code: 1
 stdout: Could not open input file: bin/console
 stderr:
-MSG,
+MSG;
+		}
+
+		foreach ($e->getSuppressed() as $suppressed) {
+			self::assertInstanceOf(JobProcessFailure::class, $suppressed);
+			self::assertStringMatchesFormat(
+				$expectedErrorFormat,
 				rtrim($suppressed->getMessage()),
 			);
 		}
